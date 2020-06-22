@@ -10,7 +10,6 @@ from nltk.stem.snowball import SnowballStemmer
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import wordnet
 from surprise import Reader, Dataset, SVD
-# from surprise import Reader, Dataset, SVD, evaluate
 
 import warnings; warnings.simplefilter('ignore')
 
@@ -20,6 +19,9 @@ import warnings; warnings.simplefilter('ignore')
 #
 # Movie Overviews and Taglines
 # Movie Cast, Crew, Keywords and Genre
+
+# building the model
+print("::: Building the movie recommendation model")
 
 # movies prep
 md = pd. read_csv('./data/movies_metadata.csv')
@@ -161,9 +163,11 @@ indices = pd.Series(smd.index, index=smd['title'])
 
 # get_recommendations('The Dark Knight').head(10)
 # get_recommendations('Mean Girls').head(10)
+print("::: Movie recommendation model ... completed !")
 
 
-def improved_recommendations(title):
+def movie_recommendations(title):
+    print("::: Calculating recommendations for movie watchers of {}".format(title))
     idx = indices[title]
     sim_scores = list(enumerate(cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
@@ -183,4 +187,3 @@ def improved_recommendations(title):
     qualified = qualified.sort_values('wr', ascending=False).head(10)
     return qualified
 
-improved_recommendations('The Dark Knight')
