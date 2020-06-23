@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -185,5 +186,8 @@ def movie_recommendations(title):
     qualified['vote_average'] = qualified['vote_average'].astype('int')
     qualified['wr'] = qualified.apply(weighted_rating, axis=1)
     qualified = qualified.sort_values('wr', ascending=False).head(10)
-    return qualified
+    arr = []
+    qualified_json = qualified.apply(lambda x: arr.append(json.loads(x.to_json())), axis=1)
+    return arr
+
 
