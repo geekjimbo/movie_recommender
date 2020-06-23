@@ -1,11 +1,22 @@
 from confluent_kafka.avro import AvroConsumer
 from confluent_kafka.avro.serializer import SerializerError
+from confluent_kafka import avro
+from confluent_kafka.avro import AvroProducer
 import lib.cbf_movie_recommendations as cbfmr
 
 def recommed_movies(query_title):
     recommendations = cbfmr.movie_recommendations(query_title)
     response = {"query_title": query_title, "recommended_movies": recommendations}
     return response
+
+f = open('data/movie_recommendations.avro')
+vs = f.read()
+value_schema = avro.loads(vs)
+avroProducer = AvroProducer({
+                'bootstrap.servers': '0.0.0.0:9092',
+                'schema.registry.url': 'http://0.0.0.0:8081'
+                },
+                default_value_schema=value_schema)
 
 c = AvroConsumer({
     'bootstrap.servers': '0.0.0.0:9092',
@@ -32,7 +43,8 @@ while True:
     query_title = msg.value()['query_title']
     print(query_title)
     recommendations = recommed_movies(query_title)
-    print(type(recommendations))
-    print(recommendations)
+    avroProducer.produce(topic='movie_recommendations', value=recommendations)
+    # print(type(recommendations))
+    # print(recommendations)
 
 c.close()
