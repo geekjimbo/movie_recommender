@@ -17,6 +17,18 @@ python recommend_movies.py
 ```
 The above commadn will build the model and tes it with one movie title `The Dark Knight`
 
+## Stream for nested JSON
+use this command
+```
+CREATE STREAM movie_recommendations (query_title varchar,
+                                     recommended_movies array<STRUCT<
+            title VARCHAR, 
+            vote_count INTEGER, 
+            vote_average INTEGER,
+            year VARCHAR,
+            wr DOUBLE>> ) 
+       WITH (kafka_topic='movie_recommendations', value_format='AVRO');
+```
 
 ## Author 
 Ing. Jimmy Figueroa A.
